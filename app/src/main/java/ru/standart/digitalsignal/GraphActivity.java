@@ -184,7 +184,6 @@ public class GraphActivity extends AppCompatActivity implements View.OnClickList
         return result;
     }
 
-    //взять дисректное преобразование фурье
     void getDPF(double[] amplSpectr, double[] phaseSpectr, double[]signals)
     {
 
