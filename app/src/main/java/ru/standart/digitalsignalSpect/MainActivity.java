@@ -1,4 +1,4 @@
-package ru.standart.digitalsignal;
+package ru.standart.digitalsignalSpect;
 
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
@@ -27,7 +27,7 @@ public class MainActivity extends AppCompatActivity {
     static final String ATTRIBUT_DURR_SIGNAL="dur_signal";
     static final String ATTRIBUT_AMPLITUDE_OF_NOISE="amplitude_of_noise";
     static final String ATTRIBUT_DURATION_DESCRET="amplitude_of_noise";
-
+    public static Signal s;
 
 
     @Override
@@ -46,9 +46,14 @@ public class MainActivity extends AppCompatActivity {
         next.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+              s =new Signal(getDouble(durationSignal), getDouble(FriqPeriodDeskret), getDouble(numberOfGarmonic),
+                        getArrayAmplitudeOrPhaseOrPhase(amplitude),getArrayAmplitudeOrPhaseOrPhase(freq),
+                        getArrayAmplitudeOrPhaseOrPhase(phase),getDouble(amplitudeOfRandomNoise));
+
                 Intent intent=new Intent(MainActivity.this, GraphActivity.class);
-                intent.putExtra(ATTRIBUT_SIGNAL,getSignalArray());
-                intent.putExtra(ATTRIBUT_t,getTArray());
+                intent.putExtra(ATTRIBUT_SIGNAL,s.getSignalArray());
+                intent.putExtra(ATTRIBUT_t,s.getTArray());
                 intent.putExtra(ATTRIBUT_DURR_SIGNAL,Integer.valueOf(durationSignal.getText().toString()));
                 intent.putExtra(ATTRIBUT_AMPLITUDE_OF_NOISE, Double.valueOf(amplitudeOfRandomNoise.getText().toString()));
                 intent.putExtra(ATTRIBUT_DURATION_DESCRET,Double.valueOf(FriqPeriodDeskret.getText().toString()));
@@ -58,7 +63,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-
+    double getDouble(EditText text)
+    {
+        return Double.valueOf(text.getText().toString());
+    }
 
     double[] getArrayAmplitudeOrPhaseOrPhase(EditText anyEdit)
     {
@@ -82,63 +90,10 @@ public class MainActivity extends AppCompatActivity {
         return arr;
     }
 
-    double getPeriodDeskret()
-    {
-        return 1/Double.valueOf(FriqPeriodDeskret.getText().toString());
-    }
 
 
-    double[] converListToDouble(List<Double>list)
-    {
-        double[]arr=new double[list.size()];
-        for (int i=0; i<list.size();i++)
-        {
-            arr[i]=list.get(i);
-        }
-        return arr;
-    }
 
-   static public double N;
-    public double[] getTArray()
-    {
-        List<Double>list=new ArrayList<>();
-        N=Math.floor(Double.valueOf(durationSignal.getText().toString()) / getPeriodDeskret());
-        double perid=getPeriodDeskret();
-        int j=0;
-        for(double i=0; i < Double.valueOf(durationSignal.getText().toString()); i+=perid)
-        {
-            list.add(i);
-        }
 
-        return converListToDouble(list);
-    }
-
-    double[] getSignalArray()
-    {
-        double[]tArray=getTArray();
-        double[] arr=new double[tArray.length];
-        double signal=0;
-        int numbOfGarmonic = Integer.valueOf(numberOfGarmonic.getText().toString());
-        double[]amplitudes=getArrayAmplitudeOrPhaseOrPhase(amplitude);
-        double[]freqs = getArrayAmplitudeOrPhaseOrPhase(freq);
-        double[]phases=getArrayAmplitudeOrPhaseOrPhase(phase);
-        for(int i=0; i<tArray.length; i++)
-        {
-            signal=0;
-            for(int j=0; j<numbOfGarmonic; j++)
-            {
-
-                signal+=amplitudes[j]*Math.cos(2 * Math.PI * freqs[j] *
-                        tArray[i] + phases[j]);
-                if(j==numbOfGarmonic-1)
-                {
-                    arr[i]=signal;
-
-                }
-            }
-        }
-        return arr;
-    }
 
 
     @Override
