@@ -28,64 +28,72 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:orientation="vertical">
-                    <HorizontalScrollView
-                        android:layout_width="fill_parent"
-                        android:layout_height="fill_parent"
-                        android:id="@+id/horizontalScrollView"
+
+                    <ScrollView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:id="@+id/scrollView"
                         android:fillViewport="true">
-                        <LinearLayout
-                            android:orientation="vertical"
+
+                        <HorizontalScrollView
                             android:layout_width="fill_parent"
-                            android:layout_height="fill_parent">
-
-                            <com.jjoe64.graphview.GraphView
-                                android:layout_width="fill_parent"
-                                android:layout_height="wrap_content"
-                                android:id="@+id/graph"
-                                android:layout_alignParentRight="true"
-                                android:layout_alignParentEnd="true"
-                                android:layout_weight="1" />
-
+                            android:layout_height="fill_parent"
+                            android:id="@+id/horizontalScrollView">
                             <LinearLayout
-                                android:orientation="horizontal"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_alignParentBottom="true"
-                                android:layout_toRightOf="@+id/graph"
-                                android:layout_toEndOf="@+id/graph"
-                                android:id="@+id/linearLayout">
+                                android:orientation="vertical"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent">
 
-                                <Button
-                                    android:layout_width="wrap_content"
+                                <com.jjoe64.graphview.GraphView
+                                    android:layout_width="fill_parent"
                                     android:layout_height="wrap_content"
-                                    android:text="Шум"
-                                    android:id="@+id/noiseOnlyGraph"
-                                    android:layout_alignParentBottom="true"
-                                    android:layout_alignParentLeft="true"
-                                    android:layout_alignParentStart="true" />
-
-                                <Button
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="зашумлен. сигнала"
-                                    android:id="@+id/withNoiseGraph"
-                                    android:layout_alignParentBottom="true"
+                                    android:id="@+id/graph"
                                     android:layout_alignParentRight="true"
-                                    android:layout_alignParentEnd="true" />
+                                    android:layout_alignParentEnd="true"
+                                    android:layout_weight="1" />
 
-                                <Button
+                                <LinearLayout
+                                    android:orientation="horizontal"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:text="Об"
-                                    android:id="@+id/normalGraph"
                                     android:layout_alignParentBottom="true"
-                                    android:layout_toLeftOf="@+id/withNoiseGraph"
-                                    android:layout_toStartOf="@+id/withNoiseGraph" />
+                                    android:layout_toRightOf="@+id/graph"
+                                    android:layout_toEndOf="@+id/graph"
+                                    android:id="@+id/linearLayout">
+
+                                    <Button
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="Шум"
+                                        android:id="@+id/noiseOnlyGraph"
+                                        android:layout_alignParentBottom="true"
+                                        android:layout_alignParentLeft="true"
+                                        android:layout_alignParentStart="true" />
+
+                                    <Button
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="зашумлен. сигнала"
+                                        android:id="@+id/withNoiseGraph"
+                                        android:layout_alignParentBottom="true"
+                                        android:layout_alignParentRight="true"
+                                        android:layout_alignParentEnd="true" />
+
+                                    <Button
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="Об"
+                                        android:id="@+id/normalGraph"
+                                        android:layout_alignParentBottom="true"
+                                        android:layout_toLeftOf="@+id/withNoiseGraph"
+                                        android:layout_toStartOf="@+id/withNoiseGraph" />
+                                </LinearLayout>
+
                             </LinearLayout>
 
-                        </LinearLayout>
+                        </HorizontalScrollView>
+                    </ScrollView>
 
-                    </HorizontalScrollView>
                 </LinearLayout>
 
           <!--      <LinearLayout
@@ -306,6 +314,49 @@
                     </LinearLayout>
             </LinearLayout>
 
+
+
+                <LinearLayout
+                    android:id="@+id/tab5"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+                    <com.jjoe64.graphview.GraphView
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/graph1"
+
+                    android:layout_weight="1" />
+                    <com.jjoe64.graphview.GraphView
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/graph2"
+
+                        android:layout_weight="1" />
+                </LinearLayout>
+
+
+
+                <LinearLayout
+                    android:id="@+id/tab6"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+                    <com.jjoe64.graphview.GraphView
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/graphFinal"
+                        android:layout_weight="1" />
+
+                    <Button
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/segment"
+                        android:text="Сигментировать"/>
+
+                </LinearLayout>
 
             </FrameLayout>
         </LinearLayout>

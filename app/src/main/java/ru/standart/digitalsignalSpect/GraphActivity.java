@@ -9,6 +9,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 
+import com.jjoe64.graphview.helper.StaticLabelsFormatter;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
 
@@ -36,11 +37,8 @@ public class GraphActivity extends AppCompatActivity implements View.OnClickList
     Button heningButton;
     Button porabolButton;
     Button firstButton;
-    int durSignal=0;
-    double[]signals;
+    Button segment;
     double[]t;
-    double[]noise;
-    double amplitudeOfNoise=0;
     final String TAB_1="tag1";
     final String TAB_2="tag2";
     final String TAB_3="tag3";
@@ -53,8 +51,11 @@ public class GraphActivity extends AppCompatActivity implements View.OnClickList
     GraphView graphFianl;
 
     TabHost tabs;
-    double durationDescret; //частота дескретизации
-    int N;
+
+
+    Signal s1;
+    Signal s2;
+    Signal finalSignal;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,16 +68,16 @@ public class GraphActivity extends AppCompatActivity implements View.OnClickList
         graphAnalis=(GraphView)findViewById(R.id.graphAnaliz);
         amplitudeAnalisButton=(Button)findViewById(R.id.amplitudeFrequencyButton);
         phaseAnalisButton=(Button)findViewById(R.id.phaseFrequencyButton);
-         graphGistog=(GraphView)findViewById(R.id.graphGistogram);
-         heningButton=(Button)findViewById(R.id.hanningButton);
-         porabolButton=(Button)findViewById(R.id.parobalButton);
-         firstButton=(Button)findViewById(R.id.firstButton);
-       /*   graphSig1=(GraphView)findViewById(R.id.graphSig1);
-          graphSig2=(GraphView)findViewById(R.id.graphSig2);
-          graphFianl=(GraphView)findViewById(R.id.graphFinal);*/
+        graphGistog=(GraphView)findViewById(R.id.graphGistogram);
+        heningButton=(Button)findViewById(R.id.hanningButton);
+        porabolButton=(Button)findViewById(R.id.parobalButton);
+        firstButton=(Button)findViewById(R.id.firstButton);
+        graphSig1=(GraphView)findViewById(R.id.graph1);
+        graphSig2=(GraphView)findViewById(R.id.graph2);
+        graphFianl=(GraphView)findViewById(R.id.graphFinal);
+        segment=(Button)findViewById(R.id.segment);
 
-
-         tabs=(TabHost)findViewById(R.id.tabHost);
+        tabs=(TabHost)findViewById(R.id.tabHost);
         tabs.setup();
 
         TabHost.TabSpec spec = tabs.newTabSpec(TAB_1);
@@ -100,7 +101,15 @@ public class GraphActivity extends AppCompatActivity implements View.OnClickList
         spec.setIndicator("АЧХ фильтр");
         tabs.addTab(spec);
 
+        spec = tabs.newTabSpec(TAB_5);
+        spec.setContent(R.id.tab5);
+        spec.setIndicator("Шаблоны");
+        tabs.addTab(spec);
 
+        spec = tabs.newTabSpec(TAB_6);
+        spec.setContent(R.id.tab6);
+        spec.setIndicator("Сегмент");
+        tabs.addTab(spec);
 
         tabs.setCurrentTab(0);
 
@@ -133,6 +142,11 @@ public class GraphActivity extends AppCompatActivity implements View.OnClickList
         durationDescret=intent.getDoubleExtra(MainActivity.ATTRIBUT_DURATION_DESCRET, durationDescret);
         N=signals.length;*/
 
+
+         s1=new Signal(1,100,1,new double[]{15},new double[]{10},new double[]{0},2);
+         s2=new Signal(1,100,1,new double[]{4},new double[]{2},new double[]{0},2);
+        finalSignal=new Signal();
+
         graph = (GraphView) findViewById(R.id.graph);
         graph.addSeries(createDataPoint(t, MainActivity.s.signal, Color.BLUE));
         graph.getViewport().setXAxisBoundsManual(true);
@@ -148,6 +162,7 @@ public class GraphActivity extends AppCompatActivity implements View.OnClickList
         porabolButton.setOnClickListener(this);
         firstButton.setOnClickListener(this);
         graph.setFocusableInTouchMode(true);
+        segment.setOnClickListener(this);
     }
 
     LineGraphSeries<DataPoint> createDataPoint(double[]x, double[]y, int color)
@@ -193,7 +208,7 @@ public class GraphActivity extends AppCompatActivity implements View.OnClickList
             case R.id.normalGraph:
             {
                 graph.removeAllSeries();
-                graph.addSeries(createDataPoint(t,MainActivity.s.signal,Color.BLUE));
+                graph.addSeries(createDataPoint(t,MainActivity.s.getSignalArray(),Color.BLUE));
                 break;
             }
 
@@ -235,7 +250,7 @@ public class GraphActivity extends AppCompatActivity implements View.OnClickList
                 graph.removeAllSeries();
                 graph.addSeries(createDataPoint(t, MainActivity.s.signal, Color.BLUE));
                 graph.addSeries(createDataPoint(t, MainActivity.s.getPorabolFiltr(), Color.RED));
-                graphGistog.addSeries(createDataPoint(MainActivity.s.getArrFrequency(),MainActivity.s.getACHFiltr(),Color.BLUE));
+                //graphGistog.addSeries(createDataPoint(MainActivity.s.getArrFrequency(),MainActivity.s.getACHFiltr(),Color.BLUE));
                 break;
             }
 
@@ -243,9 +258,25 @@ public class GraphActivity extends AppCompatActivity implements View.OnClickList
             {
                 graphGistog.removeAllSeries();
                 graph.removeAllSeries();
-                graph.addSeries(createDataPoint(t, MainActivity.s.signal, Color.BLACK));
+                graph.addSeries(createDataPoint(t, MainActivity.s.signal, Color.BLUE));
                 graph.addSeries(createDataPoint(t, MainActivity.s.getFirstFiltr(), Color.RED));
                 graphGistog.addSeries(createDataPoint(MainActivity.s.getArrFrequency(),MainActivity.s.getACHFiltr(),Color.BLUE));
+                break;
+            }
+
+            case R.id.segment:
+            {
+                graphSig1.removeAllSeries();
+                graphSig2.removeAllSeries();
+                graphFianl.removeAllSeries();
+                double[]finalSig= finalSignal.generateFinalSignal(MainActivity.s, s1, s2);
+                graphSig1.addSeries(createDataPoint(s1.getTArray(), s1.getSignalArray(), Color.RED));
+                graphSig2.addSeries(createDataPoint(s2.getTArray(), s2.getSignalArray(), Color.BLACK));
+                //graphFianl.addSeries(createDataPoint(finalSignal.getTArray(),finalSig,Color.GREEN));
+                MainActivity.s.countingEtalon();
+                s1.countingEtalon();
+                s2.countingEtalon();
+                finalSignal.drawFinalSignal(graphFianl,MainActivity.s.etalon,s1.etalon,s2.etalon,finalSig);
                 break;
             }
 

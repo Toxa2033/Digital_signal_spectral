@@ -1,5 +1,11 @@
 package ru.standart.digitalsignalSpect;
 
+import android.graphics.Color;
+
+import com.jjoe64.graphview.GraphView;
+import com.jjoe64.graphview.series.DataPoint;
+import com.jjoe64.graphview.series.LineGraphSeries;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
@@ -20,6 +26,7 @@ public class Signal {
     public double [] signal;
     public double [] noise;
     static public int N;
+    double[]etalon;
 
     public Signal( double durationSignal,double FriqPeriodDeskret,double numberOfGarmonic, double[]amplitude,double[]freq,double[]phase,double amplitudeOfRandomNoise)
     {
@@ -33,6 +40,8 @@ public class Signal {
         signal =getSignalArray();
         noise=generateNoise();
     }
+
+    public Signal(){}
 
 
     double getPeriodDeskret()
@@ -214,14 +223,14 @@ public class Signal {
 
   public  double[]getNoisesSignal()
     {
-        double[]noiseSignal=new double[N];
+        //double[]noiseSignal=new double[N];
 
         for(int i=0; i<N; i++)
         {
-            noiseSignal[i]=noise[i]+ signal[i];
+            signal[i]=noise[i]+ signal[i];
         }
 
-        return noiseSignal;
+        return signal;
     }
 
     double[] generateNoise()
@@ -248,6 +257,136 @@ public class Signal {
         return currPower;
 
     }*/
+
+    public void countingEtalon()
+    {
+        etalon = new double[signal.length];
+        for (int i = 1; i < signal.length; i++)
+        {
+            etalon[i] = 0;
+            for (int j = 0; j < i; j++)
+            {
+                etalon[i] += signal[j] * signal[j];
+            }
+            etalon[i] = etalon[i] / i;
+        }
+    }
+
+    int nextIntInRange(int min, int max, Random rng) {
+        if (min > max) {
+            throw new IllegalArgumentException("Cannot draw random int from invalid range [" + min + ", " + max + "].");
+        }
+        int diff = max - min;
+        if (diff >= 0 && diff != Integer.MAX_VALUE) {
+            return (min + rng.nextInt(diff + 1));
+        }
+        int i;
+        do {
+            i = rng.nextInt();
+        } while (i < min || i > max);
+        return i;
+    }
+
+    public double[] generateFinalSignal(Signal S1, Signal S2, Signal S3)
+    {
+        Random rnd = new Random();
+        float X = 0;
+        List<Double> sig=new ArrayList<>();
+        for (int i = 0; i < 6; i++)
+        {
+            Signal Sn = new Signal();
+            int n = nextIntInRange(0,2,new Random());
+            if (n == 0)
+            {
+                Sn = S1;
+            }
+            if (n == 1)
+            {
+                Sn = S2;
+            }
+            if (n == 2)
+            {
+                Sn = S3;
+            }
+            for (double k = 0; k < nextIntInRange(1,3,rnd); k += 0.001d)
+            {
+               double s=0;
+                for (int j = 0; j < Sn.numberOfGarmonic; j++)
+                {
+                    s+=Sn.amplitude[j]*Math.cos(2 * Math.PI * Sn.freq[j] *
+                            k + Sn.phase[j]);
+                }
+                sig.add(s);
+                X += 0.001d;
+            }
+
+        }
+        durationSignal = X;
+        FriqPeriodDeskret=1000;
+        getTArray();
+        return converListToDouble(sig);
+    }
+
+
+
+    public void drawFinalSignal(GraphView graph, double[] e1, double[] e2, double[] e3, double[]finalSignal)
+    {
+     /*   double max_A = 0;
+        for (int i = 0; i < finalSignal.length; i++)
+        {
+            if (finalSignal[i] > max_A) max_A = finalSignal[i];
+        }*/
+
+        int[] cveta = new int[finalSignal.length / 100];
+
+        for (int i = 0; i < finalSignal.length / 100; i++)
+        {
+            double[] et = new double[100];
+
+            for (int j = 1; j < 100; j++)
+            {
+                try
+                {
+                    et[j] = 0;
+                    for (int j1 = 0; j1 < j; j1++)
+                        et[j] += finalSignal[j1 + 100 * i] * finalSignal[j1 + j + 100 * i];
+                    et[j] /= j;
+                }
+                catch (Exception ex)
+                {
+
+                }
+            }
+
+            float r1 = 0.0f;
+            float r2 = 0.0f;
+            float r3 = 0.0f;
+
+            for (int k = 0; k < 100; k++)
+            {
+                r1 += Math.abs(e1[k] - et[k]);
+                r2 += Math.abs(e2[k] - et[k]);
+                r3 += Math.abs(e3[k] - et[k]);
+            }
+
+            if (r1 <= r2 && r1 <= r3) cveta[i] = Color.BLUE;
+            if (r2 <= r1 && r2 <= r3) cveta[i] = Color.RED;
+            if (r3 <= r1 && r3 <= r2) cveta[i] = Color.BLACK;
+
+        }
+
+
+        for (int i = 0; i < finalSignal.length; i++)
+        {
+            LineGraphSeries<DataPoint> series = new LineGraphSeries<DataPoint>(new DataPoint[]{new DataPoint(getTArray()[i],finalSignal[i])});
+            //DataPoint point=new DataPoint(getTArray()[i],finalSignal[i]);
+            series.setColor(cveta[i/100]);
+               // g.DrawLine(new Pen(Cveta[i / 100], 2.0f), Sign[i].X * coff_x, Sign[i].Y * coff_y + a.Size.Height / 2, Sign[i + 1].X * coff_x, Sign[i + 1].Y * coff_y + a.Size.Height / 2);
+            graph.addSeries(series);
+        }
+    }
+
+
 
     double chastotaSreza=10;
     double r=0.5;
