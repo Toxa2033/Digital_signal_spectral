@@ -143,7 +143,7 @@ public class GraphActivity extends AppCompatActivity implements View.OnClickList
         N=signals.length;*/
 
 
-         s1=new Signal(1,100,1,new double[]{15},new double[]{10},new double[]{0},2);
+         s1=new Signal(1,100,1,new double[]{15},new double[]{5},new double[]{0},2);
          s2=new Signal(1,100,1,new double[]{4},new double[]{2},new double[]{0},2);
         finalSignal=new Signal();
 
@@ -272,11 +272,11 @@ public class GraphActivity extends AppCompatActivity implements View.OnClickList
                 double[]finalSig= finalSignal.generateFinalSignal(MainActivity.s, s1, s2);
                 graphSig1.addSeries(createDataPoint(s1.getTArray(), s1.getSignalArray(), Color.RED));
                 graphSig2.addSeries(createDataPoint(s2.getTArray(), s2.getSignalArray(), Color.BLACK));
-                //graphFianl.addSeries(createDataPoint(finalSignal.getTArray(),finalSig,Color.GREEN));
-                MainActivity.s.countingEtalon();
+                graphFianl.addSeries(createDataPoint(finalSignal.getTArray(),finalSig,Color.GREEN));
+               /* MainActivity.s.countingEtalon();
                 s1.countingEtalon();
                 s2.countingEtalon();
-                finalSignal.drawFinalSignal(graphFianl,MainActivity.s.etalon,s1.etalon,s2.etalon,finalSig);
+                finalSignal.drawFinalSignal(graphFianl,MainActivity.s.etalon,s1.etalon,s2.etalon,finalSig);*/
                 break;
             }
 

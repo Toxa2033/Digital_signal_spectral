@@ -1,6 +1,7 @@
 package ru.standart.digitalsignalSpect;
 
 import android.graphics.Color;
+import android.util.Log;
 
 import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.series.DataPoint;
@@ -337,7 +338,7 @@ public class Signal {
             if (finalSignal[i] > max_A) max_A = finalSignal[i];
         }*/
 
-        int[] cveta = new int[finalSignal.length / 100];
+        int[] cveta = new int[60];
 
         for (int i = 0; i < finalSignal.length / 100; i++)
         {
@@ -375,12 +376,15 @@ public class Signal {
 
         }
 
-
-        for (int i = 0; i < finalSignal.length; i++)
+        LineGraphSeries<DataPoint> series = new LineGraphSeries<DataPoint>();
+        for (int i = 0; i < finalSignal.length-20; i++)
         {
-            LineGraphSeries<DataPoint> series = new LineGraphSeries<DataPoint>(new DataPoint[]{new DataPoint(getTArray()[i],finalSignal[i])});
+           DataPoint[] a=new DataPoint[]{new DataPoint(getTArray()[i],finalSignal[i])};
+            series.resetData(a);
             //DataPoint point=new DataPoint(getTArray()[i],finalSignal[i]);
-            series.setColor(cveta[i/100]);
+            Log.d("tag",i/100+"" );
+            Log.d("tag",i+"" );
+            series.setColor(cveta[i / 100]);
                // g.DrawLine(new Pen(Cveta[i / 100], 2.0f), Sign[i].X * coff_x, Sign[i].Y * coff_y + a.Size.Height / 2, Sign[i + 1].X * coff_x, Sign[i + 1].Y * coff_y + a.Size.Height / 2);
             graph.addSeries(series);
         }
